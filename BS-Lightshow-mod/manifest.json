@@ -1,0 +1,14 @@
+﻿{
+  "$schema": "https://raw.githubusercontent.com/bsmg/BSIPA-MetadataFileSchema/master/Schema.json",
+  "id": "BS_Lightshow_mod",
+  "name": "BS-Lightshow-mod",
+  "author": "Jangberry",
+  "version": "0.0.1",
+  "description": "This is the mod part of a larger project for lightshows from beatsaber map files, see https://github.com/Jangberry/BS-Lightshow",
+  "gameVersion": "1.16.2",
+  "dependsOn": {
+    "BSIPA": "^4.0.5",
+    "CustomJSONData":  "^2.0.0"
+  },
+  "features": []
+}
