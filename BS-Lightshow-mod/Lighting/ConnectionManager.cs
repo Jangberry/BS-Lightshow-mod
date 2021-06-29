@@ -17,15 +17,14 @@ namespace BS_Lightshow_mod.Lighting
         private IMqttClientOptions options;
         private readonly Stopwatch stopwatch;
         private byte[] sendStack = new byte[0];
+        private Timer timer;
+
+        public float delay = 0;
 
         public ConnectionManager()
         {
             stopwatch = new Stopwatch();
         }
-
-        private Timer timer;
-
-        public float delay = 0;
 
         // TODO: watchdog
         // TODO: Reconnection method (for handling parameters change)
@@ -112,8 +111,9 @@ namespace BS_Lightshow_mod.Lighting
         }
         public void SendStack(byte[] message, bool end = false)
         {
-            sendStack = sendStack.Concat(message).ToArray();
-            if (end)
+            if (message.Length > 0)
+                sendStack = sendStack.Concat(message).ToArray();
+            if (end && sendStack.Length > 0)
             {
                 Send(sendStack);
                 sendStack = new byte[0];
@@ -142,7 +142,9 @@ namespace BS_Lightshow_mod.Lighting
             if (message.ApplicationMessage.Topic == "/led/ping" && message.ApplicationMessage.ConvertPayloadToString().Contains("pong"))
             {
                 stopwatch.Stop();
-                delay = (float)stopwatch.Elapsed.TotalSeconds / 2;  // TODO: integrate a scallable evaluation of the ping
+                delay = (float)stopwatch.Elapsed.TotalSeconds;
+                // As the delay alos count computing delay we can't really divide it by 2... I made the choice of overestimating the delay a bit by ignoring network layer delay
+                // TODO: integrate a scallable evaluation of the ping
 
 #if DEBUG
                 Plugin.Log?.Info("New delay: " + delay.ToString());

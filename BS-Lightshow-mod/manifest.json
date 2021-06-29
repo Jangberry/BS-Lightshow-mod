@@ -3,7 +3,7 @@
   "id": "BS_Lightshow_mod",
   "name": "BS-Lightshow-mod",
   "author": "Jangberry",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "This is the mod part of a larger project for lightshows from beatsaber map files, see https://github.com/Jangberry/BS-Lightshow",
   "gameVersion": "1.16.2",
   "dependsOn": {

@@ -14,11 +14,11 @@ namespace BS_Lightshow_mod.Lighting
         }
         public static void HandleBeatmapEventCallback(BeatmapEventData eventData)
         {   // TODO: Optimize
+            byte[] message = new byte[0];
             if ((int)eventData.type < 6)
             {
                 CustomBeatmapEventData customEventData = eventData as CustomBeatmapEventData;
 
-                byte[] message = new byte[0];
 
                 message = message.Append(ByteClamp(7 + ((int)eventData.type << 3))).ToArray(); // the 3 first bit at 1 (=7) represents a game event 
                 message = message.Append(ByteClamp(eventData.value)).ToArray();
@@ -40,11 +40,11 @@ namespace BS_Lightshow_mod.Lighting
                     message = message.Concat(BitConverter.GetBytes(gradient.Get<float>("_duration"))).ToArray();
                     message = message.Concat(gradient.Get<List<object>>("_startColor").Take(3).Select(n => ByteClamp((int)(Convert.ToSingle(n) * 255)))).ToArray();
                     message = message.Concat(gradient.Get<List<object>>("_endColor").Take(3).Select(n => ByteClamp((int)(Convert.ToSingle(n) * 255)))).ToArray();
-                }
-                bool end = Plugin.callbackData.nextEventIndex > 0 &&
-                    Plugin.beatmapData.beatmapEventsData[Plugin.callbackData.nextEventIndex].time != Plugin.beatmapData.beatmapEventsData[Plugin.callbackData.nextEventIndex - 1].time;
-                Plugin.connection.SendStack(message, end);
+                }    
             }
+            if (Plugin.callbackData.nextEventIndex > 0 && Plugin.beatmapData.beatmapEventsData[Plugin.callbackData.nextEventIndex].time != Plugin.beatmapData.beatmapEventsData[Plugin.callbackData.nextEventIndex - 1].time)
+                Plugin.connection.SendStack(message, true);
+            // TODO: Try to find a better way to make it send even if the last event at a timecode isn't a lightevent
         }
         public static void NewMap(IDifficultyBeatmap data)
         {
@@ -58,12 +58,12 @@ namespace BS_Lightshow_mod.Lighting
                 Plugin.Log?.Debug("No custom environement colors or unable to parse them");
 #endif
                 Plugin.connection.Send(new byte[] { 0x01, 0x00, 0x00, 0xFF,
-                                                    0x41, 0xFF, 0x00, 0x00}, false);
+                                                    0x41, 0xFF, 0x00, 0x00}, false);    // TODO: include environement colors (ex: Green & Blue for CrabRaveEnvironment)
             }
             else
             {
-                Plugin.connection.Send(new byte[] { 0x01, ByteClamp((int)(colorLeft.Get<float>("r")  * 255)), ByteClamp((int)(colorLeft.Get<float>("g")  * 255)), ByteClamp((int)(colorLeft.Get<float>("b")  * 255)),
-                                                    0x41, ByteClamp((int)(colorRight.Get<float>("r") * 255)), ByteClamp((int)(colorRight.Get<float>("g") * 255)), ByteClamp((int)(colorRight.Get<float>("b") * 255))}, false);
+                Plugin.connection.Send(new byte[] { 0x01, ByteClamp((int)(colorRight.Get<float>("r") * 255)), ByteClamp((int)(colorRight.Get<float>("g") * 255)), ByteClamp((int)(colorRight.Get<float>("b") * 255)),
+                                                    0x41, ByteClamp((int)(colorLeft.Get<float>("r")  * 255)), ByteClamp((int)(colorLeft.Get<float>("g")  * 255)), ByteClamp((int)(colorLeft.Get<float>("b")  * 255))}, false);
 #if DEBUG
                 Plugin.Log?.Debug("Custom environement colors detected and sent");
 #endif
