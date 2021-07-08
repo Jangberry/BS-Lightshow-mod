@@ -14,3 +14,8 @@ Game/Mod half of the project [BS-Lightshow](https://github.com/Jangberry/BS-Ligh
 ## Configuration
 
 In your BeatSaber directory, under Userdata you will find `BS-Lightshow-mod.json`, with this you may configure the parameters related to the server (as of v0.0.1 it requires a TLS enabled server) and how often you want to ping your lighting device (used to compensate the delay)
+
+## Inspiration
+
+While the RGB strip idea came alone, I have to admit that stubling on [CUESaber](https://github.com/Zeitheron/CUESaber) really decided me to begin the mod and helped me a bit into understanding modding.
+I don't handle it the same way as it does tho, mainly because of the delay but also because my interaction with LEDs is different.
